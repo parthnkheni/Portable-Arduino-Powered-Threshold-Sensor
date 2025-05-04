@@ -1,38 +1,35 @@
-#include <Wire.h> // allows the Arduino to communicate with I2C devices (LCD)
-#include <LiquidCrystal_I2C.h> // Library for LCD
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h> 
 
-int warning_led_pin = 3;  // Red Led
-int temp_sensor_pin = A0; // Temp Sensor. The analog pin the TMP36's Vout (sense) pin is connected to the resolution is 10 mV / degree centigrade with a 500 mV offset to allow for negative temperatures
-int buzzer = 5; //Buzzer
-LiquidCrystal_I2C lcd(0x20,16,2); // LCD
+int warning_led_pin = 3; 
+int temp_sensor_pin = A0; 
+int buzzer = 5; 
+LiquidCrystal_I2C lcd(0x20,16,2);
 
 void setup() {
-  Serial.begin(9600); // Initalizing Serial Monitor (used for testing)
-  pinMode(warning_led_pin, OUTPUT); // Initalizing the pin for the warning led (Red LED)
-  pinMode(buzzer, OUTPUT); // Initalizing the pin for the buzzer
-  lcd.init(); // Initalizing the LCD 
+  Serial.begin(9600); 
+  pinMode(warning_led_pin, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  lcd.init(); 
 }
 
 void loop() {
-     int reading = analogRead(temp_sensor_pin); //getting the voltage reading from the temperature sensor
+     int reading = analogRead(temp_sensor_pin); 
      
      float voltage = reading * 5.0;
-     voltage /= 1024.0; // converting that reading to voltage
+     voltage /= 1024.0; 
      
-     float temperatureC = (voltage - 0.5) * 100; // converting the voltage to Celsius 
-     
-     float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0; // converting Celsius to Fahrenheit
+     float temperatureC = (voltage - 0.5) * 100; 
+  
+     float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
 
      lcd.backlight();
      lcd.print(" ");
-     // lcd.print("Temperature: "); 
-     lcd.print(temperatureC); lcd.println(" degrees C"); // Print variable value to LCD
+     lcd.print(temperatureC); lcd.println(" degrees C"); 
      lcd.setCursor(1,1);
-     lcd.print(temperatureF); lcd.println(" degrees F"); // Print variable value to LCD
-     delay(1000); //waiting a second
+     lcd.print(temperatureF); lcd.println(" degrees F"); 
+     delay(1000); 
 
-     // The if statement below is saying that if the temperature is less than 70 or higher than 75, then the warning led is going to blink and the buzzer is going to make a noise. 
-     // If the temperature is out of the predetermined bounds, then the warning led is not going to blink and the buzzer is not going to make a noise.
      if(temperatureF < 70 || temperatureF > 75) { 
       digitalWrite(warning_led_pin, HIGH);
       delay(100);
